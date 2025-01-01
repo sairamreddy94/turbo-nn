@@ -60,7 +60,7 @@ def training_pipeline(args):
 
   # Attempt to load pretrained model if available.
   try:
-    model_path = os.path.join(experiment_log, 'BiGRU.hdf5')
+    model_path = os.path.join(experiment_log, 'BiGRU.keras')
     pretrained = tf.keras.models.load_model(
         model_path,
         custom_objects={'BER': BER, 'BLER': BLER})
@@ -83,7 +83,7 @@ def training_pipeline(args):
   # Setup some callbacks to help training better
   summary = TrainValTensorBoard(experiment_log, write_graph=False) # TensorBoard
   backup = tf.keras.callbacks.ModelCheckpoint(                     # Backup best model
-      filepath='%s/BiGRU.hdf5' % experiment_log,
+      filepath='%s/BiGRU.keras' % experiment_log,
       monitor='val_BER',
       save_best_only=True)
   # Stop training early if the model seems to overfit
@@ -94,9 +94,9 @@ def training_pipeline(args):
       verbose=0, mode='auto')
 
   model.fit(
-      train_set.make_one_shot_iterator(),
+      train_set,
       steps_per_epoch=len(Y_train) // args.batch_size,
-      validation_data=test_set.make_one_shot_iterator(),
+      validation_data=test_set,
       validation_steps=len(Y_test) // args.batch_size,
       callbacks=[summary, backup, early_stoping],
       epochs=args.epochs)

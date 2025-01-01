@@ -1,0 +1,1 @@
+conda activate turbo3 && export PYTHONPATH=$PWD/turbo-nn:$PYTHONPATH && papermill --kernel=turbo3 turbo-nn/reproduce_result.ipynb turbo-nn/reports/reproduce_result_output.ipynb

@@ -25,7 +25,7 @@ def data_genenerator(x, y, batch_size, shuffle=True):
     dataset = dataset.shuffle(1000)
   dataset = dataset.batch(batch_size)
   dataset = dataset.repeat()
-  dataset = dataset.prefetch(buffer_size=tf.contrib.data.AUTOTUNE)
+  dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
   return dataset
 
 
@@ -72,7 +72,7 @@ def func(block_length, trellis, noise_type, sigma, error_prob):
   for training Neural Decoder.
   """
 
-  ground_truth = generate_message_bits(block_length)
+  ground_truth = generate_message_bits(block_length).astype(int)
   kwargs = {
     'noise_type': noise_type,
     'sigma': sigma,

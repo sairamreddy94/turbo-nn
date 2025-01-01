@@ -4,9 +4,9 @@
 Reference:
 [1] Kim, Hyeji, et al. "Communication Algorithms via Deep Learning." ICLR (2018)
 """
-from tensorflow.python.keras.layers import GRU, LSTM, Dense
-from tensorflow.python.keras.layers import BatchNormalization
-from tensorflow.python.keras.layers import Bidirectional, TimeDistributed
+from tensorflow.keras.layers import GRU, LSTM, Dense
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Bidirectional, TimeDistributed
 
 
 def NRSCDecoder(x, 

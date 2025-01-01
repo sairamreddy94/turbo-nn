@@ -11,6 +11,10 @@ def BER(y, y_pred):
     ber - a tf.float - represents bit error rate
         in a batch.
   """
+  # hamming_distances =  tf.cast(tf.not_equal(y, tf.round(y_pred)), tf.int32)
+  # ber = tf.reduce_sum(hamming_distances) / tf.size(y)
+  # return ber
+  y = tf.cast(y, tf.float32)  
   hamming_distances =  tf.cast(tf.not_equal(y, tf.round(y_pred)), tf.int32)
   ber = tf.reduce_sum(hamming_distances) / tf.size(y)
   return ber
@@ -27,7 +31,7 @@ def BLER(y, y_pred):
     """
     num_blocks_per_batch = tf.cast(tf.shape(y)[0], tf.int64)
     hamming_distances =  tf.cast(tf.not_equal(y, tf.round(y_pred)), tf.int32)
-    bler = tf.count_nonzero(tf.reduce_sum(hamming_distances, axis=1)) / num_blocks_per_batch
+    bler = tf.math.count_nonzero(tf.reduce_sum(hamming_distances, axis=1)) / num_blocks_per_batch
     return bler
 
 class TrainValTensorBoard(tf.keras.callbacks.TensorBoard):
@@ -45,7 +49,7 @@ class TrainValTensorBoard(tf.keras.callbacks.TensorBoard):
 
     def set_model(self, model):
         # Setup writer for validation metrics
-        self.val_writer = tf.summary.FileWriter(self.val_log_dir)
+        self.val_writer = tf.summary.create_file_writer(self.val_log_dir)
         super(TrainValTensorBoard, self).set_model(model)
 
     def on_epoch_end(self, epoch, logs=None):
@@ -55,11 +59,8 @@ class TrainValTensorBoard(tf.keras.callbacks.TensorBoard):
         logs = logs or {}
         val_logs = {k.replace('val_', ''): v for k, v in logs.items() if k.startswith('val_')}
         for name, value in val_logs.items():
-            summary = tf.Summary()
-            summary_value = summary.value.add()
-            summary_value.simple_value = value.item()
-            summary_value.tag = name
-            self.val_writer.add_summary(summary, epoch)
+            with self.val_writer.as_default():
+                tf.summary.scalar(name, value if isinstance(value, float) else value.item(), step=epoch)
         self.val_writer.flush()
 
         # Pass the remaining logs to `TensorBoard.on_epoch_end`

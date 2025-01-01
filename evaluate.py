@@ -39,7 +39,7 @@ def main(args):
   # Load pre-trained Neural Decoder Model
   # #####################################
   try:
-    model_path = os.path.join(experiment_log, 'BiGRU.hdf5')
+    model_path = os.path.join(experiment_log, 'BiGRU.keras')
     print(model_path)
     model = tf.keras.models.load_model(model_path, custom_objects={'BER': BER, 'BLER': BLER})
     model.compile(optimizer='adam', loss='binary_crossentropy')
